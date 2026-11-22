@@ -61,6 +61,7 @@ use Vvbx\AdminBundle\Help\HelpPage;
 class MembershipCrudController extends AbstractCrudController
 ```
 
+- Un CRUD sans attribut prend ceux de son parent le plus proche qui en porte : une sous-liste filtrée (`class AdhesionsEnCoursCrudController extends MembershipCrudController`) garde le bouton de sa liste, ou déclare le sien, qui remplace ceux du parent.
 - Sur la liste, le bouton est une action globale ; ailleurs, une action de l'entité (EasyAdmin n'affiche pas les actions globales en édition ni en détail).
 - Sans le rôle configuré : ni menu, ni bouton, ni lien, et les pages répondent 403.
 

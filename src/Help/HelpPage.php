@@ -9,7 +9,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
  * #[HelpPage('adhesions')], ou #[HelpPage('mise-en-route#1-lidentité-de-lassociation', pages: [Crud::PAGE_EDIT])].
  *
  * La cible est « page » ou « page#section » (identifiant du titre, voir HelpTestCase).
- * Répétable : une cible différente par page EasyAdmin.
+ * Répétable : une cible différente par page EasyAdmin. Hérité : un CRUD sans attribut prend ceux de son parent
+ * le plus proche qui en porte (une sous-liste filtrée garde le bouton de sa liste, ou déclare le sien).
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
 final class HelpPage
@@ -30,9 +31,14 @@ final class HelpPage
      */
     public static function of(string $controllerFqcn): array
     {
-        return array_map(
-            static fn (\ReflectionAttribute $attribute): self => $attribute->newInstance(),
-            (new \ReflectionClass($controllerFqcn))->getAttributes(self::class),
-        );
+        // ---- les attributs PHP ne s'héritent pas : on remonte jusqu'à la première classe qui en porte
+        for ($class = new \ReflectionClass($controllerFqcn); false !== $class; $class = $class->getParentClass()) {
+            $attributes = $class->getAttributes(self::class);
+            if ([] !== $attributes) {
+                return array_map(static fn (\ReflectionAttribute $attribute): self => $attribute->newInstance(), $attributes);
+            }
+        }
+
+        return [];
     }
 }
