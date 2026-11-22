@@ -1,0 +1,38 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}Aide - {{ pages[current] }}{% endblock %}
+{% block content_title %}{{ pages[current] }}{% endblock %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        .help { display: flex; gap: 2rem; align-items: flex-start; }
+        .help-toc { flex: 0 0 15rem; position: sticky; top: 1rem; }
+        .help-toc a.active { font-weight: bold; }
+        .help-body { flex: 1; min-width: 0; max-width: 60rem; }
+        .help-body img { max-width: 100%; border: 1px solid var(--border-color, #dee2e6); border-radius: 4px; margin: .5rem 0 1rem; }
+        .help-body h1 { display: none; }
+        .help-body h2 { margin-top: 2rem; }
+        .help-body table { width: 100%; border-collapse: collapse; margin: .5rem 0 1.5rem; }
+        .help-body th, .help-body td { border: 1px solid var(--border-color, #dee2e6); padding: .5rem .75rem; vertical-align: top; }
+        .help-body th { background: var(--bs-light, #f8f9fa); text-align: left; }
+        .help-body blockquote { border-left: 4px solid var(--bs-warning, #ffc107); padding: .5rem 1rem; background: var(--bs-light, #f8f9fa); }
+        @media (max-width: 992px) { .help { flex-direction: column; } .help-toc { position: static; } }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="help">
+        <nav class="help-toc">
+            <ol class="list-unstyled">
+                {% for slug, title in pages %}
+                    <li class="mb-2"><a href="{{ path(page_route, {page: slug}) }}"{% if slug == current %} class="active"{% endif %}>{{ title }}</a></li>
+                {% endfor %}
+            </ol>
+        </nav>
+        <article class="help-body">
+            {# ---- contenu versionné avec le code, écrit par l'équipe : rendu tel quel #}
+            {{ content|markdown_to_html }}
+        </article>
+    </div>
+{% endblock %}
